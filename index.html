@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX Bull Put Credit Spread Trading Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>SPX Bull Put Credit Spread Trading Dashboard</h1>
+                <div class="header-info">
+                    <div class="datetime-display">
+                        <span id="current-datetime">Loading...</span>
+                    </div>
+                    <div class="market-status">
+                        <span class="status status--success" id="market-status">MARKET OPEN</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- RSI Monitor Section -->
+            <section class="card rsi-section">
+                <div class="card__header">
+                    <h2>RSI Monitor</h2>
+                    <div class="signal-indicator" id="signal-indicator">
+                        <span class="status status--success">BUY SIGNAL</span>
+                    </div>
+                </div>
+                <div class="card__body">
+                    <div class="rsi-display">
+                        <div class="rsi-gauge">
+                            <div class="gauge-container">
+                                <div class="gauge-value" id="rsi-value">32.4</div>
+                                <div class="gauge-label">RSI</div>
+                            </div>
+                        </div>
+                        <div class="rsi-chart-container" style="position: relative; height: 300px;">
+                            <canvas id="rsi-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Strategy Parameters Section -->
+            <section class="card strategy-params">
+                <div class="card__header">
+                    <h2>Strategy Parameters</h2>
+                </div>
+                <div class="card__body">
+                    <form class="strategy-form" id="strategy-form">
+                        <div class="form-group">
+                            <label class="form-label">RSI Threshold</label>
+                            <input type="number" class="form-control" id="rsi-threshold" value="35" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Days to Expiry</label>
+                            <input type="number" class="form-control" id="days-expiry" value="14" min="1" max="60">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Profit Target (%)</label>
+                            <input type="number" class="form-control" id="profit-target" value="50" min="10" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Position Size</label>
+                            <input type="number" class="form-control" id="position-size" value="1" min="1" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Max Positions</label>
+                            <input type="number" class="form-control" id="max-positions" value="5" min="1" max="20">
+                        </div>
+                        <button type="submit" class="btn btn--primary">Update Parameters</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Current Positions Section -->
+            <section class="card positions-section">
+                <div class="card__header">
+                    <h2>Current Positions</h2>
+                    <button class="btn btn--secondary btn--sm" id="add-position-btn">Add Position</button>
+                </div>
+                <div class="card__body">
+                    <div class="table-container">
+                        <table class="positions-table">
+                            <thead>
+                                <tr>
+                                    <th>Entry Date</th>
+                                    <th>Strikes</th>
+                                    <th>DTE</th>
+                                    <th>P&L</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="positions-tbody">
+                                <!-- Positions will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Metrics Section -->
+            <section class="card performance-section">
+                <div class="card__header">
+                    <h2>Performance Metrics</h2>
+                </div>
+                <div class="card__body">
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-value" id="win-rate">91.7%</div>
+                            <div class="metric-label">Win Rate</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value profit" id="total-pnl">$8,420</div>
+                            <div class="metric-label">Total P&L</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="avg-days">6.8</div>
+                            <div class="metric-label">Avg Days</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value profit" id="month-pnl">$1,250</div>
+                            <div class="metric-label">This Month</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trading Signals History -->
+            <section class="card signals-section">
+                <div class="card__header">
+                    <h2>Recent Signals</h2>
+                </div>
+                <div class="card__body">
+                    <div class="signals-list" id="signals-list">
+                        <!-- Signals will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risk Management Section -->
+            <section class="card risk-section">
+                <div class="card__header">
+                    <h2>Risk Management</h2>
+                </div>
+                <div class="card__body">
+                    <div class="risk-calculator">
+                        <div class="form-group">
+                            <label class="form-label">Account Balance ($)</label>
+                            <input type="number" class="form-control" id="account-balance" value="50000" min="1000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Risk per Trade (%)</label>
+                            <input type="number" class="form-control" id="risk-percent" value="2" min="0.5" max="10" step="0.5">
+                        </div>
+                        <div class="risk-metrics">
+                            <div class="risk-item">
+                                <span class="risk-label">Max Risk per Trade:</span>
+                                <span class="risk-value" id="max-risk">$1,000</span>
+                            </div>
+                            <div class="risk-item">
+                                <span class="risk-label">Current Portfolio Risk:</span>
+                                <span class="risk-value" id="portfolio-risk">$500</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Platform Setup Guide -->
+            <section class="card platform-section">
+                <div class="card__header">
+                    <h2>Platform Setup Guide</h2>
+                </div>
+                <div class="card__body">
+                    <div class="platforms-grid" id="platforms-grid">
+                        <!-- Platforms will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Add Position Modal -->
+    <div class="modal hidden" id="add-position-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Position</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-position-form">
+                    <div class="form-group">
+                        <label class="form-label">Entry Date</label>
+                        <input type="date" class="form-control" id="entry-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Short Strike</label>
+                        <input type="number" class="form-control" id="short-strike" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Long Strike</label>
+                        <input type="number" class="form-control" id="long-strike" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="expiry-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Entry Credit ($)</label>
+                        <input type="number" class="form-control" id="entry-credit" step="0.01" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn--primary">Add Position</button>
+                        <button type="button" class="btn btn--secondary" id="cancel-modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
